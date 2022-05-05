@@ -1,13 +1,22 @@
 
 export class Keyboard {
     constructor(language ) {
-      this._language = language;
+      this._language = language; 
+ 
+      if (localStorage.getItem('mylang') === null) 
+        this._language = 'en'; 
+      else 
+      this._language = localStorage.getItem('mylang');
+ 
+       
       this._layoutTemplate = {};
-      
+      this._currLayout = 'default';
+      this._capsOn = 0;
+      this._shiftOn = 0;
     }
 
     get language() {
-        return `${this._language} *`;
+        return this._language;
     }
     
     set language(newValue) {
@@ -94,6 +103,8 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
             this.createButton( symbol, this._layoutTemplate.keycode.lang, step, index );          
         });
     }          
+
+   
   }
 
     
@@ -101,48 +112,135 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
       document.addEventListener('keydown', (e) => this.listKeyDown(e));
       document.addEventListener('keyup', (e) => this.listKeyUp(e));
 
-      document.addEventListener('mousedown', (e) => this.listMousedown(e));
-      document.addEventListener('mouseup', (e) => this.listMouseup(e));
+      const btnChoose = document.querySelector('#keyboard-container');
+      btnChoose.addEventListener('mousedown', (e) => this.listMousedown(e));
+      btnChoose.addEventListener('mouseup', (e) => this.listMouseup(e));
     }
 
 
     listMousedown(e) {
-      
-      console.log('listMousedown + ');
-      console.log(e.target);
-      const btnChoose = document.querySelector(`[data-keycode="${e.target.dataset.keycode}"]`);
-      btnChoose.classList.add('clicked');
+      if(e.target.id != 'keyboard-container')
+      {
+        console.log('listMousedown + ');
+        console.log(e.target.id);
+        const btnChoose = document.querySelector(`[data-keycode="${e.target.dataset.keycode}"]`);
+        btnChoose.classList.add('clicked');
+        this.writeWord(btnChoose);
+      }
     }
 
     listMouseup(e) {
-      console.log('listMouseup + ' + e.target);
-      const btnChoose = document.querySelector(`[data-keycode="${e.target.dataset.keycode}"]`);
-      btnChoose.classList.remove('clicked');
+      if(e.target.id != 'keyboard-container')
+      {
+        console.log('listMouseup + ' + e.target);
+        const btnChoose = document.querySelector(`[data-keycode="${e.target.dataset.keycode}"]`);
+        btnChoose.classList.remove('clicked');
+      }
       
     }
 
     listKeyDown(e){
-      console.log('listKeyDown + ' + e.code);
+      console.log(e.ctrlKey + ' - listKeyDown + ' + e.code);
 
       const btnChoose = document.querySelector(`[data-keycode="${e.code}"]`);
       btnChoose.classList.add('clicked');
 
+      //select lang
+      if ((e.code === 'ControlLeft' && e.altKey === true) || (e.code === 'AltLeft' && e.ctrlKey === true))
+      {
+        
+        console.log('_language * ');         
+        if (this._language === 'ru') 
+            this._language = 'en'; 
+        else 
+            this._language = 'ru'; 
 
+        localStorage.setItem('mylang', this._language);
+       
+        const KBcontainer = document.querySelector("#keyboard-container");
+        KBcontainer.innerHTML = '';
+        this.createKeyboard();
+         
+      }
+      else if (e.code === 'CapsLock')
+      {
+        console.log('upper CapsLock * ');    
+        this._currLayout = 'caps';
 
-      const word = this._layoutTemplate.keycode.lang.en.default[btnChoose.dataset.step][btnChoose.dataset.index]
-      document.querySelector('textarea').innerHTML += word;
-
-
-
-
+        const KBcontainer = document.querySelector("#keyboard-container");
+        KBcontainer.innerHTML = '';
+        this.createKeyboard();
+      }
+      else if (e.code === 'ShiftLeft' || e.code === 'ShiftRight')
+      { 
+        this._currLayout = 'shift'; 
+        
+        const KBcontainer = document.querySelector("#keyboard-container");
+        KBcontainer.innerHTML = '';
+        this.createKeyboard();
+        
+      }
+      this.writeWord(btnChoose);
+      
     }
+
+
 
     listKeyUp(e){
       console.log('listKeyUp + ' + e.code);
 
       const btnChoose = document.querySelector(`[data-keycode="${e.code}"]`);
       btnChoose.classList.remove('clicked');
-      
+
+
+      if (e.code === 'ShiftLeft' || e.code === 'ShiftRight')
+      {
+        this._currLayout = 'default'; 
+        const KBcontainer = document.querySelector("#keyboard-container");
+        KBcontainer.innerHTML = '';
+        this.createKeyboard();
+        
+      }
+      else if (e.code === 'CapsLock')
+      {
+        this._currLayout = 'default'; 
+        const KBcontainer = document.querySelector("#keyboard-container");
+        KBcontainer.innerHTML = '';
+        this.createKeyboard();
+        
+      }
+    }
+
+    writeWord(btnChoose)
+    {
+      const currLang = this._language;
+      const currentLayout = this._currLayout;
+      const word = this._layoutTemplate.keycode.lang[currLang][currentLayout][btnChoose.dataset.step][btnChoose.dataset.index];
+      switch (word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) {
+        case 'Ctrl':
+          break;
+        case 'Alt':
+          break;
+          case 'Tab':
+            break;
+          case 'Backspace':
+            break;
+            case 'Del':
+              break;
+            case 'Caps':
+              break;
+              case 'Enter':
+                break;
+              case 'Shift':
+                break;
+                case 'Win':
+                  break;
+                case 'Space':
+                  break;
+        default:
+          document.querySelector('textarea').innerHTML += word;
+      }
+     
     }
 
 
@@ -151,14 +249,18 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
     }
 
     createButton(symbol, lang, step, index ) {
+      
+        const currLang = '' + this.language ;
+        const currentLayout = this._currLayout;
+        console.log(currLang);
 
-        console.log(symbol + ' восток' + lang.en.default[step][index]);
+        console.log(symbol + ' восток' + lang[currLang][currentLayout][step][index]);
         
         const KBcontainer = document.querySelector("#keyboard-container");
-        
+   
         
         const keyCode = symbol;
-        const keyCodeToHumanReadbleCode = lang.en.default[step][index]; 
+        const keyCodeToHumanReadbleCode = lang[currLang][currentLayout][step][index]; 
         
         const keyBTN = document.createElement('button');
         keyBTN.setAttribute('data-keycode', keyCode);
@@ -175,6 +277,8 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
         keyBTN.appendChild(span);
         
         */
+
+       
         KBcontainer.appendChild(keyBTN);
         
         
@@ -205,6 +309,13 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
         const divKBBox = document.createElement('div');
         divKBBox.setAttribute('id', 'keyboard-container');
         div.appendChild(divKBBox);
+
+        const divText = document.createElement('div');
+        divText.setAttribute('id', 'property');
+        divText.innerHTML = `Клавиатура создана в операционной системе Windows<br>
+        Для переключения языка комбинация: левыe ctrl + alt`;
+        div.appendChild(divText);
+
 
         this.layout();
     }
