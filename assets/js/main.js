@@ -2,6 +2,7 @@
 export class Keyboard {
     constructor(language ) {
       this._language = language;
+      this._layoutTemplate = {};
       
     }
 
@@ -57,7 +58,7 @@ const lay5EnShift = ["Ctrl", 'Win', 'Alt', 'Space', 'Alt', '←', '↓', '→', 
 const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'ArrowLeft', 'ArrowDown', 'ArrowRight', 'ControlRight'  ];
 
 
-      const layoutTemplate = {
+      this._layoutTemplate = {
                           
                 keycode: {  
                     value: [keyCode1, keyCode2, keyCode3, keyCode4, keyCode5],
@@ -83,10 +84,10 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
 
 
     let step;
-    for (step = 0; step < layoutTemplate.keycode.value.length; step++) {
+    for (step = 0; step < this._layoutTemplate.keycode.value.length; step++) {
         
-        layoutTemplate.keycode.value[step].map((symbol, index) => {            
-            this.createButton( symbol, layoutTemplate.keycode.lang, step, index );          
+        this._layoutTemplate.keycode.value[step].map((symbol, index) => {            
+            this.createButton( symbol, this._layoutTemplate.keycode.lang, step, index );          
         });
     }       
     
@@ -107,6 +108,14 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
       const btnChoose = document.querySelector(`[data-keycode="${e.code}"]`);
       btnChoose.classList.add('clicked');
 
+
+
+      const word = this._layoutTemplate.keycode.lang.en.default[btnChoose.dataset.step][btnChoose.dataset.index]
+      document.querySelector('textarea').innerHTML += word;
+
+
+
+
     }
 
     listKeyUp(e){
@@ -114,7 +123,7 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
 
       const btnChoose = document.querySelector(`[data-keycode="${e.code}"]`);
       btnChoose.classList.remove('clicked');
-
+      
     }
 
 
@@ -134,6 +143,8 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
         
         const keyBTN = document.createElement('button');
         keyBTN.setAttribute('data-keycode', keyCode);
+        keyBTN.setAttribute('data-step', step);
+        keyBTN.setAttribute('data-index', index);
       
         keyBTN.classList.add('btn');
         keyBTN.classList.add(`btn-${keyCode}` );
