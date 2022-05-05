@@ -77,29 +77,48 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
                     }
                 } 
                 
-           
-   
     };
 
+    this.createKeyboard();
+
+     
+
+  }
 
 
+  createKeyboard(){    
     let step;
     for (step = 0; step < this._layoutTemplate.keycode.value.length; step++) {
         
         this._layoutTemplate.keycode.value[step].map((symbol, index) => {            
             this.createButton( symbol, this._layoutTemplate.keycode.lang, step, index );          
         });
-    }       
-    
-    
-
-     
-
+    }          
   }
+
     
     listenEvent(){
       document.addEventListener('keydown', (e) => this.listKeyDown(e));
       document.addEventListener('keyup', (e) => this.listKeyUp(e));
+
+      document.addEventListener('mousedown', (e) => this.listMousedown(e));
+      document.addEventListener('mouseup', (e) => this.listMouseup(e));
+    }
+
+
+    listMousedown(e) {
+      
+      console.log('listMousedown + ');
+      console.log(e.target);
+      const btnChoose = document.querySelector(`[data-keycode="${e.target.dataset.keycode}"]`);
+      btnChoose.classList.add('clicked');
+    }
+
+    listMouseup(e) {
+      console.log('listMouseup + ' + e.target);
+      const btnChoose = document.querySelector(`[data-keycode="${e.target.dataset.keycode}"]`);
+      btnChoose.classList.remove('clicked');
+      
     }
 
     listKeyDown(e){
@@ -148,15 +167,15 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
       
         keyBTN.classList.add('btn');
         keyBTN.classList.add(`btn-${keyCode}` );
-      
+        keyBTN.textContent = keyCodeToHumanReadbleCode;
         
-
+        /*
         const span = document.createElement('span');
         span.textContent = keyCodeToHumanReadbleCode;
         keyBTN.appendChild(span);
-        KBcontainer.appendChild(keyBTN);
-
         
+        */
+        KBcontainer.appendChild(keyBTN);
         
         
     }
