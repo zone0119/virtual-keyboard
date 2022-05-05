@@ -20,7 +20,7 @@ export class Keyboard {
 
       const lay1En = ["`", '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', "Backspace"];
  const lay1EnShift = ["~", '!', '@', '#', '$', '%', '^', '&', '*', "(", ")", "_", "+", "Backspace"];
- const keyCode1= ["Backquote", 'Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit9', 'Digit0', 'NumpadSubtract', 'Equal', "Backspace"];
+ const keyCode1= ["Backquote", 'Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit9', 'Digit0', 'Minus', 'Equal', "Backspace"];
 
 
 
@@ -30,7 +30,7 @@ export class Keyboard {
 
    const lay2En = ["Tab", 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', "[", "]", '\\', 'Del'];
 const lay2EnShift = ["Tab", 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', "O", "P", "{", "}", "|", 'Del'];
-const keyCode2 = ["Tab", 'KeyQ', 'KeyW', 'KeyE', 'KeyR', 'KeyT', 'KeyY', 'KeyU', 'KeyI', "KeyO", "KeyP", "BracketLeft", "BracketRight", "Backslash", 'Del'];
+const keyCode2 = ["Tab", 'KeyQ', 'KeyW', 'KeyE', 'KeyR', 'KeyT', 'KeyY', 'KeyU', 'KeyI', "KeyO", "KeyP", "BracketLeft", "BracketRight", "Backslash", 'Delete'];
 
    const lay2Ru = ["Tab", 'й', 'ц', 'у', 'к', 'е', 'н', 'г', 'ш', 'щ', 'з', "х", "ъ", '\\', 'Del'];
 const lay2RuShift = ["Tab", 'Й', 'Ц', 'У', 'К', 'Е', 'Н', 'Г', 'Ш', "Щ", "З", "Х", "Ъ", "/", 'Del'];
@@ -102,6 +102,10 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
 
     listKeyDown(e){
       console.log('listKeyDown + ' + e.code);
+
+      const btnChoose = document.querySelector(`[data-keycode="${e.code}"]`);
+      btnChoose.classList.add('clicked');
+
     }
 
     upperCase(arr) {
