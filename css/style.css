@@ -17,18 +17,101 @@ body {
 }
 
 #container {
-	max-width: 800px;
+	max-width: 850px; 
 	width: 100%;
 	margin: 0 auto;
     border:0px solid green;
-    padding:100px 50px;
+    padding:10px 10px;
 }
 
 #container textarea {
-    width: 795px;
+    width: 850px;
     height: 200px;
     border:2px solid #ccc;
     background-color: #f5f5f5;
-    padding:10px;
+    padding: 10px;
     font-size: 2.2rem;
+    resize: none;
+}
+#keyboard-container {   
+    display:flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 8px auto;
+    max-width: 795px;
+    border: 1px solid orange;
+    background: #ccc;
+    
+
+}
+#keyboard-container .btn:hover {
+    border: 1px solid green;
+    background-color: rgb(158, 158, 158);
+    color: white;
+}
+#keyboard-container .btn {
+    border: 1px solid yellow;
+    cursor: pointer; 
+    text-align: center; 
+    font-size: 15px; 
+    font-weight: 500;
+    width: 40px; 
+    height: 40px;
+    margin:3px;
+    
+}
+
+#keyboard-container .btn-Backspace {
+    width: 150px;
+    background-color: rgb(214, 214, 214);
+}
+#keyboard-container .btn-Del {
+    width: 100px;
+    background-color: rgb(214, 214, 214);
+}
+#keyboard-container .btn-CapsLock {
+    width: 90px;
+    background-color: rgb(214, 214, 214);
+}
+#keyboard-container .btn-Enter {
+    width: 150px;
+    background-color: rgb(214, 214, 214);
+}
+
+#keyboard-container .btn-ShiftLeft {
+    width: 100px;
+    background-color: rgb(214, 214, 214);
+}
+#keyboard-container .btn-Tab {
+    background-color: rgb(214, 214, 214);
+}
+
+
+#keyboard-container .btn-ShiftRight {
+    width: 130px;
+    background-color: rgb(214, 214, 214);
+}
+
+#keyboard-container .btn-ControlLeft {
+    width: 40px;
+    background-color: rgb(214, 214, 214);
+}
+
+
+#keyboard-container .btn-Space {
+    width: 350px;
+    background-color: rgb(214, 214, 214);
+}
+
+#keyboard-container .btn-ControlRight {
+    width: 80px;
+    background-color: rgb(214, 214, 214);
+}
+
+ #keyboard-container .btn-ArrowUp, 
+ #keyboard-container .btn-ArrowRight, 
+ #keyboard-container .btn-ArrowLeft, 
+ #keyboard-container .btn-ArrowDown {
+    background-color: rgb(214, 214, 214);
 }
