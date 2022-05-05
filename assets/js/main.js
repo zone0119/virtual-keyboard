@@ -3,6 +3,7 @@
 export class Keyboard {
     constructor(language ) {
       this._language = language;
+      
     }
 
     get language() {
@@ -16,12 +17,14 @@ export class Keyboard {
 
 
     layout() {
+      //Code values on Windows KeyboardEvent.code
+//https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code/code_values
 
-
-        
       const lay1En = ["`", '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', "Backspace"];
  const lay1EnShift = ["~", '!', '@', '#', '$', '%', '^', '&', '*', "(", ")", "_", "+", "Backspace"];
  const keyCode1= ["Backquote", 'Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit9', 'Digit0', 'NumpadSubtract', 'Equal', "Backspace"];
+
+
 
       const lay1Ru = ["`", '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', "Backspace"];
  const lay1RuShift = ["~", '!', '@', '#', '$', '%', '^', '&', '*', "(", ")", "_", "+", "Backspace"];
@@ -55,45 +58,71 @@ const lay4RuShift = ["Shift", 'Я', 'Ч', 'С', 'М', 'И', 'Т', 'Ь', 'Б', '�
 const lay5EnShift = ["Ctrl", 'Win', 'Alt', 'Space', 'Alt', 'Ctrl', '←', '↓', '→'  ];
 const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltLeft', 'ControlLeft', 'ArrowLeft', 'ArrowDown', 'ArrowRight'  ];
 
-      const layoutTemplateEn = {
-          default: [lay1En, lay2En, lay3En, lay4En, lay5En ], 
-          shift: [lay1EnShift, lay2EnShift, lay3EnShift, lay4EnShift, lay5EnShift],
-          keycode: [keyCode1, keyCode2, keyCode3, keyCode4, keyCode5]
-      };
 
-      const layoutTemplateRu = {
-        default: [lay1Ru, lay2Ru, lay3Ru, lay4Ru, lay5Ru ], 
-        shift: [lay1RuShift, lay2RuShift, lay3RuShift, lay4RuShift, lay5RuShift],
-        keycode: [keyCode1, keyCode2, keyCode3, keyCode4, keyCode5]
+      const layoutTemplate = {
+                          
+                keycode: {  
+                    value: [keyCode1, keyCode2, keyCode3, keyCode4, keyCode5],
+                    lang: {
+                            ru: {
+                                default: [lay1Ru, lay2Ru, lay3Ru, lay4Ru, lay5En ], 
+                                shift: [lay1RuShift, lay2RuShift, lay3RuShift, lay4RuShift, lay5EnShift],
+                                caps: [lay1En , this.upperCase(lay2En), this.upperCase(lay3En), this.upperCase(lay4En), lay5En ],
+                                
+                            },
+                            en: {
+                                default: [lay1En, lay2En, lay3En, lay4En, lay5En ], 
+                                shift: [lay1EnShift, lay2EnShift, lay3EnShift, lay4EnShift, lay5EnShift],                        
+                                caps: [lay1En , this.upperCase(lay2En), this.upperCase(lay3En), this.upperCase(lay4En), lay5En  ]
+                            }
+                    }
+                } 
+                
+           
+   
     };
 
 
 
-      const doubles1 = lay1.map((symbol) => {            
-          this.createButton(symbol);            
-      });
-      
+    let step;
+    for (step = 0; step < layoutTemplate.keycode.value.length; step++) {
+        
+        layoutTemplate.keycode.value[step].map((symbol, index) => {            
+            this.createButton( symbol, layoutTemplate.keycode.lang, step, index );          
+        });
+    }       
+    
+    
+      /*
       const lay3 = ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';', "'"];
       const doubles2 = lay2.map((symbol) => {                
           this.createButton(symbol);                
       });
-          
+       */
      
 
   }
     
-    createButton(symbol) {
-        const KBcontainer = document.querySelector("#keyboard-container");
+    upperCase(arr) {
+        return arr.map(function(x){ return x.toUpperCase() });
+    }
 
-        const keyCode = symbol.charCodeAt(0);
-        const keyCodeToHumanReadbleCode = String.fromCharCode(keyCode);
+    createButton(symbol, lang, step, index ) {
+
+        console.log(symbol + ' восток' + lang.en.default[step][index]);
+        
+        const KBcontainer = document.querySelector("#keyboard-container");
+        
+        
+        const keyCode = symbol; // symbol.charCodeAt(0);
+        const keyCodeToHumanReadbleCode = lang.en.default[step][index]; // String.fromCharCode(keyCode);
         
         const keyBTN = document.createElement('button');
         keyBTN.setAttribute('data-keycode', keyCode);
-        keyBTN.setAttribute('id', `k_${keyCode}`);
+        //keyBTN.setAttribute('id', `k_${keyCode}`);
         keyBTN.classList.add('btn');
-        
-        keyBTN.setAttribute('style', 'cursor: pointer; text-align: center; font-size: 32px; width: 60px; height:60px; margin:4px;');
+        keyBTN.classList.add(`btn-${keyCode}` );
+        //keyBTN.setAttribute('style', '');
         //transform: translateY(3px);
 
         const span = document.createElement('span');
@@ -103,16 +132,6 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltLeft', 'Con
 
         
         
-
-
-
-
-
-
-
-
-
-
         
     }
 
@@ -154,3 +173,26 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltLeft', 'Con
   };
   
 
+
+  /*
+  https://www.freecodecamp.org/news/javascript-keycode-list-keypress-event-key-codes/
+
+
+  let elem = document.getElementById('type-here');
+
+elem.addEventListener("keydown", function (event) {
+    // The parameter event is of the type KeyboardEvent
+  	addRow(event);
+});
+  
+
+
+document
+  .getElementById("to_focus")
+  .addEventListener("keydown", function(event) {
+    if (event.ctrlKey && event.key === "z") {
+      // Do Something, may be an 'Undo' operation
+    }
+});
+
+  */
