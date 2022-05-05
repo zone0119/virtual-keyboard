@@ -98,6 +98,7 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
     
     listenEvent(){
       document.addEventListener('keydown', (e) => this.listKeyDown(e));
+      document.addEventListener('keyup', (e) => this.listKeyUp(e));
     }
 
     listKeyDown(e){
@@ -107,6 +108,15 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
       btnChoose.classList.add('clicked');
 
     }
+
+    listKeyUp(e){
+      console.log('listKeyUp + ' + e.code);
+
+      const btnChoose = document.querySelector(`[data-keycode="${e.code}"]`);
+      btnChoose.classList.remove('clicked');
+
+    }
+
 
     upperCase(arr) {
         return arr.map(function(x){ return x.toUpperCase() });
