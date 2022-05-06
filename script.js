@@ -1,7 +1,7 @@
 console.log('script');
 
 
-import  {Keyboard}  from '../../assets/js/main.js';
+import  {Keyboard}  from './main.js';
 
 
 const keyboard1 = new Keyboard("en");
