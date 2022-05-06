@@ -11,7 +11,16 @@ export class Keyboard {
        
       this._layoutTemplate = {};
       this._currLayout = 'default';
-      this._capsOn = 0;
+
+
+
+      if (localStorage.getItem('caps') === null) 
+        this._capsOn = 0;
+      else 
+        this._capsOn = localStorage.getItem('caps');
+ 
+
+     
       this._shiftOn = 0;
     }
 
@@ -75,7 +84,7 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
                             ru: {
                                 default: [lay1Ru, lay2Ru, lay3Ru, lay4Ru, lay5En ], 
                                 shift: [lay1RuShift, lay2RuShift, lay3RuShift, lay4RuShift, lay5EnShift],
-                                caps: [lay1En , this.upperCase(lay2En), this.upperCase(lay3En), this.upperCase(lay4En), lay5En ],
+                                caps: [lay1En , this.upperCase(lay2Ru), this.upperCase(lay3Ru), this.upperCase(lay4Ru), lay5En ],
                                 
                             },
                             en: {
@@ -100,7 +109,49 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
     for (step = 0; step < this._layoutTemplate.keycode.value.length; step++) {
         
         this._layoutTemplate.keycode.value[step].map((symbol, index) => {            
-            this.createButton( symbol, this._layoutTemplate.keycode.lang, step, index );          
+            this.createButton( symbol, this._layoutTemplate.keycode.lang, step, index, '' );          
+        });
+    }          
+
+   
+  }
+
+
+  reCreateKeyboardShift(){    
+    let step;
+    for (step = 0; step < this._layoutTemplate.keycode.value.length; step++) {
+        
+        this._layoutTemplate.keycode.value[step].map((symbol, index) => {       
+          if (symbol === 'ShiftLeft' || symbol === 'ShiftRight' )
+          {     
+            this.createButton( symbol, this._layoutTemplate.keycode.lang, step, index, 'clicked' );   
+          }   
+          else
+          {
+            this.createButton( symbol, this._layoutTemplate.keycode.lang, step, index, '' );   
+          }    
+        });
+    }          
+
+   
+  }
+
+  reCreateKeyboardCaps(){    
+    let step;
+    for (step = 0; step < this._layoutTemplate.keycode.value.length; step++) {
+        
+        this._layoutTemplate.keycode.value[step].map((symbol, index) => {       
+          if(symbol === 'CapsLock' || this._capsOn == true && symbol === 'CapsLock')
+          {
+            if(this._capsOn === 1)
+            this.createButton( symbol, this._layoutTemplate.keycode.lang, step, index, 'clicked' ); 
+            else
+            this.createButton( symbol, this._layoutTemplate.keycode.lang, step, index, '' );     
+          }      
+          else
+          {
+            this.createButton( symbol, this._layoutTemplate.keycode.lang, step, index, '' );   
+          }    
         });
     }          
 
@@ -115,16 +166,84 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
       const btnChoose = document.querySelector('#keyboard-container');
       btnChoose.addEventListener('mousedown', (e) => this.listMousedown(e));
       btnChoose.addEventListener('mouseup', (e) => this.listMouseup(e));
+      
     }
 
 
     listMousedown(e) {
       if(e.target.id != 'keyboard-container')
       {
-        console.log('listMousedown + ');
-        console.log(e.target.id);
+        console.log('listMousedown +* ');
+        console.log(e.target.dataset.keycode);
         const btnChoose = document.querySelector(`[data-keycode="${e.target.dataset.keycode}"]`);
         btnChoose.classList.add('clicked');
+
+
+      if (e.target.dataset.keycode === 'CapsLock')
+      {
+        console.log('listMousedown CapsLock * ');    
+        this._currLayout = 'caps';
+
+
+     
+
+        
+        if (this._capsOn === 1) 
+        {
+          this._capsOn = 0; 
+          this._currLayout = 'caps'; 
+          const KBcontainer = document.querySelector("#keyboard-container");
+          KBcontainer.innerHTML = '';
+          this.reCreateKeyboardCaps();
+        }        
+        else 
+        {
+          this._capsOn =  1; 
+          this._currLayout = 'default'; 
+          const KBcontainer = document.querySelector("#keyboard-container");
+          KBcontainer.innerHTML = '';
+          this.reCreateKeyboardCaps();
+        }
+         
+        localStorage.setItem('caps', this._capsOn);
+        
+      }
+      else if (e.target.dataset.keycode === 'Backspace')
+      { 
+        console.log('backs');
+        document.querySelector('textarea').innerHTML = document.querySelector('textarea').innerHTML.slice(0, -1);
+        
+      }
+      else if (e.target.dataset.keycode === 'Tab')
+      { 
+        console.log('tab');
+        document.querySelector('textarea').innerHTML = document.querySelector('textarea').innerHTML + '    ';
+        
+      }
+      else if (e.target.dataset.keycode === 'Delete')
+      { 
+        console.log('del');
+
+       const textAr = document.querySelector('textarea').innerHTML;
+       //.innerHTML = document.querySelector('textarea').innerHTML + '    ';
+       console.log(textAr );
+
+      }
+      else if (e.target.dataset.keycode === 'Enter')
+      { 
+        console.log('Enter');
+        document.querySelector('textarea').innerHTML = document.querySelector('textarea').innerHTML + '\n';
+        
+      }
+      else if (e.target.dataset.keycode === 'Space')
+      { 
+        console.log('Enter');
+        document.querySelector('textarea').innerHTML = document.querySelector('textarea').innerHTML + ' ';
+        
+      }
+
+
+
         this.writeWord(btnChoose);
       }
     }
@@ -133,10 +252,33 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
       if(e.target.id != 'keyboard-container')
       {
         console.log('listMouseup + ' + e.target);
-        const btnChoose = document.querySelector(`[data-keycode="${e.target.dataset.keycode}"]`);
-        btnChoose.classList.remove('clicked');
-      }
-      
+        
+
+            if (e.target.dataset.keycode === 'CapsLock')
+            {
+
+              if (this._capsOn === 1) 
+              {
+                this._currLayout = 'caps'; 
+                const KBcontainer = document.querySelector("#keyboard-container");
+                KBcontainer.innerHTML = '';
+                this.reCreateKeyboardCaps();
+              }        
+              else 
+              {
+                this._currLayout = 'default'; 
+                const KBcontainer = document.querySelector("#keyboard-container");
+                KBcontainer.innerHTML = '';
+                this.reCreateKeyboardCaps();
+              }
+
+
+          }
+          else{
+            const btnChoose = document.querySelector(`[data-keycode="${e.target.dataset.keycode}"]`);
+            btnChoose.classList.remove('clicked');
+          }
+        }
     }
 
     listKeyDown(e){
@@ -144,7 +286,7 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
 
       const btnChoose = document.querySelector(`[data-keycode="${e.code}"]`);
       btnChoose.classList.add('clicked');
-
+      console.log(btnChoose);
       //select lang
       if ((e.code === 'ControlLeft' && e.altKey === true) || (e.code === 'AltLeft' && e.ctrlKey === true))
       {
@@ -167,9 +309,18 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
         console.log('upper CapsLock * ');    
         this._currLayout = 'caps';
 
+
+        if (this._capsOn === 1) 
+        this._capsOn = 0; 
+        else 
+        this._capsOn =  1; 
+
+        localStorage.setItem('caps', this._capsOn);
+
+        
         const KBcontainer = document.querySelector("#keyboard-container");
         KBcontainer.innerHTML = '';
-        this.createKeyboard();
+        this.reCreateKeyboardCaps();
       }
       else if (e.code === 'ShiftLeft' || e.code === 'ShiftRight')
       { 
@@ -177,11 +328,43 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
         
         const KBcontainer = document.querySelector("#keyboard-container");
         KBcontainer.innerHTML = '';
-        this.createKeyboard();
+        this.reCreateKeyboardShift();
         
       }
+      else if (e.code === 'Backspace')
+      { 
+        
+        document.querySelector('textarea').innerHTML = document.querySelector('textarea').innerHTML.slice(0, -1);
+        
+      }
+      else if (e.code === 'Tab')
+      { 
+        e.preventDefault();
+        console.log('tab');
+        document.querySelector('textarea').innerHTML = document.querySelector('textarea').innerHTML + '    ';
+        
+      }
+      else if (e.code === 'Enter')
+      { 
+        console.log('Enter');
+        document.querySelector('textarea').innerHTML = document.querySelector('textarea').innerHTML + '\n';
+        
+      }
+      else if (e.code === 'Space')
+      { 
+        e.preventDefault();
+        console.log('Space');
+        document.querySelector('textarea').innerHTML = document.querySelector('textarea').innerHTML + ' ';
+        
+      }
+
+
+
+
+
+
+
       this.writeWord(btnChoose);
-      
     }
 
 
@@ -203,10 +386,28 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
       }
       else if (e.code === 'CapsLock')
       {
-        this._currLayout = 'default'; 
-        const KBcontainer = document.querySelector("#keyboard-container");
-        KBcontainer.innerHTML = '';
-        this.createKeyboard();
+
+        if (this._capsOn === 1) 
+        {
+          this._currLayout = 'caps'; 
+          const KBcontainer = document.querySelector("#keyboard-container");
+          KBcontainer.innerHTML = '';
+          this.reCreateKeyboardCaps();
+        }        
+        else 
+        {
+          this._currLayout = 'default'; 
+          const KBcontainer = document.querySelector("#keyboard-container");
+          KBcontainer.innerHTML = '';
+          this.reCreateKeyboardCaps();
+        }
+         
+
+        
+
+        
+
+
         
       }
     }
@@ -247,14 +448,14 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
     upperCase(arr) {
         return arr.map(function(x){ return x.toUpperCase() });
     }
-
-    createButton(symbol, lang, step, index ) {
+    
+    createButton(symbol, lang, step, index, clicked ) {
       
         const currLang = '' + this.language ;
         const currentLayout = this._currLayout;
         console.log(currLang);
 
-        console.log(symbol + ' восток' + lang[currLang][currentLayout][step][index]);
+        //console.log(symbol + ' восток' + lang[currLang][currentLayout][step][index]);
         
         const KBcontainer = document.querySelector("#keyboard-container");
    
@@ -269,8 +470,14 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
       
         keyBTN.classList.add('btn');
         keyBTN.classList.add(`btn-${keyCode}` );
+
+        if(clicked == 'clicked')
+        keyBTN.classList.add('clicked');
+
         keyBTN.textContent = keyCodeToHumanReadbleCode;
+       
         
+
         /*
         const span = document.createElement('span');
         span.textContent = keyCodeToHumanReadbleCode;
@@ -283,8 +490,7 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
         
         
     }
-
-
+    
 
     createTextArea() {
         const textField = document.createElement('textarea');
