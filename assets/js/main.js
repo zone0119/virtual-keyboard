@@ -166,6 +166,9 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
       const btnChoose = document.querySelector('#keyboard-container');
       btnChoose.addEventListener('mousedown', (e) => this.listMousedown(e));
       btnChoose.addEventListener('mouseup', (e) => this.listMouseup(e));
+
+      const textAre = document.querySelector('textarea');
+      textAre.addEventListener('click', (e) => this.getClickedPos(e));
       
     }
 
@@ -211,7 +214,14 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
       else if (e.target.dataset.keycode === 'Backspace')
       { 
         console.log('backs');
-        document.querySelector('textarea').innerHTML = document.querySelector('textarea').innerHTML.slice(0, -1);
+        const textAre = document.querySelector('textarea');
+
+        let getCPos = this.getCaretPos(textAre);        
+
+        
+        textAre.innerHTML = textAre.value.slice(0,getCPos-1) + textAre.value.slice(getCPos, textAre.value.length);
+
+        textAre.setSelectionRange(getCPos, getCPos);
         
       }
       else if (e.target.dataset.keycode === 'Tab')
@@ -222,11 +232,16 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
       }
       else if (e.target.dataset.keycode === 'Delete')
       { 
-        console.log('del');
+        console.log('Deletes');
+        
+        const textAre1 = document.querySelector('textarea');
 
-       const textAr = document.querySelector('textarea').innerHTML;
-       //.innerHTML = document.querySelector('textarea').innerHTML + '    ';
-       console.log(textAr );
+        let getCPos1 = this.getCaretPos(textAre1);        
+
+        
+        textAre1.innerHTML = textAre1.value.substring(0, getCPos1)
+         + textAre1.value.substring( getCPos1 + 1 , textAre1.length  );
+         
 
       }
       else if (e.target.dataset.keycode === 'Enter')
@@ -237,13 +252,19 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
       }
       else if (e.target.dataset.keycode === 'Space')
       { 
-        console.log('Enter');
+        console.log('Space');
         document.querySelector('textarea').innerHTML = document.querySelector('textarea').innerHTML + ' ';
         
       }
+      else if (e.target.dataset.keycode === 'ShiftLeft' || e.target.dataset.keycode === 'ShiftRight')
+      {
+        this._currLayout = 'shift'; 
+          
+        const KBcontainer = document.querySelector("#keyboard-container");
+        KBcontainer.innerHTML = '';
+        this.reCreateKeyboardShift();
 
-
-
+      }
         this.writeWord(btnChoose);
       }
     }
@@ -290,7 +311,7 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
       //select lang
       if ((e.code === 'ControlLeft' && e.altKey === true) || (e.code === 'AltLeft' && e.ctrlKey === true))
       {
-        
+        //e.preventDefault();
         console.log('_language * ');         
         if (this._language === 'ru') 
             this._language = 'en'; 
@@ -333,8 +354,16 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
       }
       else if (e.code === 'Backspace')
       { 
+        console.log('Backspace*-*');
+        const textAre = document.querySelector('textarea');
+
+        let getCPos = this.getCaretPos(textAre);        
+
         
-        document.querySelector('textarea').innerHTML = document.querySelector('textarea').innerHTML.slice(0, -1);
+        textAre.innerHTML = textAre.value.slice(0,getCPos-1) + textAre.value.slice(getCPos, textAre.value.length);
+        
+       // textAre.setSelectionRange(textAre.value.length,textAre.value.length);
+       textAre.setSelectionRange(getCPos, getCPos);
         
       }
       else if (e.code === 'Tab')
@@ -491,14 +520,19 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
         
     }
     
+    focusOn()
+    {
+      const textField = document.createElement('textarea');
+      textField.focus();
+    }
 
     createTextArea() {
         const textField = document.createElement('textarea');
+       
         textField.setAttribute('id', 'my-textarea');
-
+        
         const container = document.querySelector("#container");
-        container.appendChild(textField);
-
+        container.appendChild(textField);        
         
     }
 
@@ -527,9 +561,18 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
     }
 
     
-    
+    getCaretPos(textareaField) {
+      return textareaField.selectionStart;
+    }
+
+    getClickedPos() {
+      
+      const textAr = document.querySelector('textarea');
+     let w = this.getCaretPos(textAr);
+     console.log('getClickedPos' + w);
 
 
+    }
 
     
   };
