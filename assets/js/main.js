@@ -169,6 +169,9 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
 
       const textAre = document.querySelector('textarea');
       textAre.addEventListener('click', (e) => this.getClickedPos(e));
+
+
+      
       
     }
 
@@ -265,7 +268,13 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
         this.reCreateKeyboardShift();
 
       }
+
+     
         this.writeWord(btnChoose);
+
+        
+
+
       }
     }
 
@@ -468,7 +477,13 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
                 case 'Space':
                   break;
         default:
-          document.querySelector('textarea').innerHTML += word;
+
+          const textAr2 = document.querySelector('textarea');
+          let getCPos = this.getCaretPos(textAr2);
+          
+
+          textAr2.innerHTML += word;
+          textAr2.setSelectionRange(getCPos, getCPos);
       }
      
     }
@@ -571,7 +586,17 @@ const keyCode5 = ["ControlLeft", 'MetaLeft', 'AltLeft', 'Space', 'AltRight', 'Ar
      let w = this.getCaretPos(textAr);
      console.log('getClickedPos' + w);
 
+     this.getSelection();
 
+    }
+
+    getSelection()
+    {
+      const textAr = document.querySelector('textarea');
+      console.log('getSelection');
+      console.log(textAr.selectionStart, textAr.selectionEnd);
+      textAr.setSelectionRange(textAr.selectionStart, textAr.selectionEnd);
+      textAr.focus();
     }
 
     
